@@ -100,7 +100,7 @@ The Tavily Research Agent combines web search and generative AI in a simple Pyth
 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/tavily-research-agent.git
+git clone https://github.com/satvik0297-del/tavily-research-agent.git
 ```
 
 Replace `YOUR-USERNAME` with your GitHub username.
