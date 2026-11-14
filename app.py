@@ -1281,20 +1281,22 @@ if "final_report" in st.session_state:
             f"{index}. [{source['title']}]({source['url']})"
         )
         
+
 # ==========================================
 # APPLICATION FOOTER
 # ==========================================
 
 st.divider()
 
+footer_html = """
+<div style="text-align:center; color:#94A3B8; padding:15px;">
+    <b>Tavily Research Agent</b><br>
+    AI-Powered Web Research and Report Generation<br>
+    Built using Python, Tavily, Google Gemini and Streamlit
+</div>
+"""
+
 st.markdown(
-    """
-    <div style="text-align:center; color:#94A3B8; padding:15px;">
-        <b>Tavily Research Agent</b><br>
-        AI-Powered Web Research and Report Generation<br>
-        Built using Python, Tavily, Google Gemini and Streamlit
-    </div>
-    """,
+    footer_html,
     unsafe_allow_html=True
 )
-
