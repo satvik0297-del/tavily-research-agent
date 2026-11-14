@@ -10,14 +10,21 @@ from google import genai
 from io import BytesIO
 from xml.sax.saxutils import escape
 
+
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
+from reportlab.lib import colors
+
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
-    Spacer
+    Spacer,
+    PageBreak,
+    Table,
+    TableStyle
 )
+
 
 
 # ==========================================
@@ -576,27 +583,73 @@ IMPORTANT RULES:
 8. Do not claim independent verification.
 9. If evidence is insufficient, say so.
 
+
 REPORT FORMAT:
 
 # Research Report: {topic}
 
 ## 1. Executive Summary
 
+Write a concise overview of the research. Highlight the most important findings.
+
 ## 2. Research Questions
+
+List the questions investigated.
 
 ## 3. Key Findings and Analysis
 
-## 4. Opportunities and Challenges
+Organise the findings into meaningful subsections.
 
-## 5. Evidence Gaps and Limitations
+Use comparison tables whenever the evidence supports comparisons.
 
-## 6. Actionable Recommendations
+Example table format:
 
-## 7. Future Outlook
+| Topic | Finding | Supporting Source |
+|---|---|---|
+| Example A | Evidence-based finding | [S1] |
+| Example B | Evidence-based finding | [S2] |
 
-Use clear professional Markdown.
+## 4. Important Data and Trends
+
+Include numerical findings only when the supplied evidence contains reliable numbers.
+
+When numerical information is available:
+- Present it in a Markdown table.
+- Include the unit, time period, and source ID.
+- Explain what the numbers mean.
+- Do not calculate or estimate missing values.
+
+If the evidence does not contain useful numerical data, explain the important qualitative trends instead.
+
+## 5. Opportunities and Challenges
+
+Explain the major opportunities and challenges using evidence.
+
+## 6. Evidence Gaps and Limitations
+
+Mention missing information, uncertainty and conflicting evidence.
+
+## 7. Actionable Recommendations
+
+Provide practical recommendations supported by the findings.
+
+## 8. Future Outlook
+
+Explain possible future developments without presenting speculation as established fact.
+
+IMPORTANT PRESENTATION RULES:
+
+1. Use clear, professional Markdown.
+2. Use comparison tables where genuinely useful.
+3. Avoid unnecessary repetition.
+4. Use short paragraphs and descriptive headings.
+5. Cite factual claims with exact source IDs such as [S1].
+6. Never invent statistics, percentages, dates or source IDs.
+7. Do not create tables merely for decoration.
+8. Keep all conclusions tied to the supplied evidence.
+
 Return the report only.
-"""
+
 
     report = ask_gemini(prompt)
 
@@ -637,83 +690,445 @@ Return the report only.
 # PDF REPORT GENERATOR
 # ==========================================
 
+
+# ==========================================
+# PROFESSIONAL PDF REPORT GENERATOR
+# ==========================================
+
 def create_pdf(report):
 
     buffer = BytesIO()
 
+    # Extract report title
+    title = "Research Report"
+
+    for line in report.split("\n"):
+        if line.startswith("# "):
+            title = line[2:].strip()
+            break
+
+    # Create PDF document
     pdf = SimpleDocTemplate(
         buffer,
         pagesize=A4,
         rightMargin=20 * mm,
         leftMargin=20 * mm,
-        topMargin=20 * mm,
-        bottomMargin=20 * mm
+        topMargin=22 * mm,
+        bottomMargin=20 * mm,
+        title=title,
+        author="Tavily Research Agent"
     )
 
     styles = getSampleStyleSheet()
 
+    # Custom styles
+    styles.add(
+        ParagraphStyle(
+            name="ReportTitle",
+            parent=styles["Title"],
+            fontSize=25,
+            leading=32,
+            textColor=colors.HexColor("#173B63"),
+            spaceAfter=15,
+            alignment=1
+        )
+    )
+
+    styles.add(
+        ParagraphStyle(
+            name="SectionHeading",
+            parent=styles["Heading2"],
+            fontSize=15,
+            leading=20,
+            textColor=colors.HexColor("#176B87"),
+            spaceBefore=16,
+            spaceAfter=9
+        )
+    )
+
+    styles.add(
+        ParagraphStyle(
+            name="SubHeading",
+            parent=styles["Heading3"],
+            fontSize=12,
+            leading=16,
+            textColor=colors.HexColor("#334155"),
+            spaceBefore=10,
+            spaceAfter=6
+        )
+    )
+
+    styles.add(
+        ParagraphStyle(
+            name="ReportBody",
+            parent=styles["BodyText"],
+            fontSize=9.5,
+            leading=15,
+            textColor=colors.HexColor("#334155"),
+            spaceAfter=7
+        )
+    )
+
+    styles.add(
+        ParagraphStyle(
+            name="CoverSubtitle",
+            parent=styles["Normal"],
+            fontSize=11,
+            leading=17,
+            textColor=colors.HexColor("#64748B"),
+            alignment=1
+        )
+    )
+
     story = []
 
-    for line in report.split("\n"):
+    # --------------------------------------
+    # COVER PAGE
+    # --------------------------------------
 
-        line = line.strip()
+    story.append(Spacer(1, 55 * mm))
+
+    story.append(
+        Paragraph(
+            "TAVILY RESEARCH AGENT",
+            ParagraphStyle(
+                name="Brand",
+                parent=styles["Normal"],
+                fontSize=12,
+                textColor=colors.HexColor("#0D9488"),
+                alignment=1,
+                spaceAfter=20
+            )
+        )
+    )
+
+    story.append(
+        Paragraph(
+            escape(title),
+            styles["ReportTitle"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            "AI-Powered Research Report",
+            styles["CoverSubtitle"]
+        )
+    )
+
+    story.append(Spacer(1, 18 * mm))
+
+    story.append(
+        Paragraph(
+            "Research generated using Tavily Search and Google Gemini",
+            styles["CoverSubtitle"]
+        )
+    )
+
+    story.append(PageBreak())
+
+    # --------------------------------------
+    # INLINE MARKDOWN FORMATTING
+    # --------------------------------------
+
+    def format_text(text):
+
+        text = escape(text)
+
+        # Convert Markdown links into clickable PDF links
+        text = re.sub(
+            r"\[([^\]]+)\]\((https?://[^)]+)\)",
+            lambda match: (
+                '<link href="' + match.group(2) +
+                '" color="#087E8B"><u>' +
+                match.group(1) + '</u></link>'
+            ),
+            text
+        )
+
+        # Convert bold Markdown
+        text = re.sub(
+            r"\*\*(.+?)\*\*",
+            r"<b>\1</b>",
+            text
+        )
+
+        return text
+
+    # --------------------------------------
+    # PAGE HEADER AND FOOTER
+    # --------------------------------------
+
+    def draw_page(canvas, document):
+
+        canvas.saveState()
+
+        page_width, page_height = A4
+
+        canvas.setStrokeColor(
+            colors.HexColor("#DCE5EE")
+        )
+
+        canvas.setLineWidth(0.6)
+
+        canvas.line(
+            20 * mm,
+            page_height - 14 * mm,
+            page_width - 20 * mm,
+            page_height - 14 * mm
+        )
+
+        canvas.setFont("Helvetica", 8)
+
+        canvas.setFillColor(
+            colors.HexColor("#64748B")
+        )
+
+        canvas.drawString(
+            20 * mm,
+            10 * mm,
+            "Tavily Research Agent"
+        )
+
+        canvas.drawRightString(
+            page_width - 20 * mm,
+            10 * mm,
+            f"Page {document.page}"
+        )
+
+        canvas.restoreState()
+
+    # --------------------------------------
+    # READ REPORT CONTENT
+    # --------------------------------------
+
+    lines = report.split("\n")
+
+    index = 0
+
+    # Skip the first title because it is already on the cover
+    while index < len(lines):
+
+        if lines[index].startswith("# "):
+            index += 1
+            break
+
+        index += 1
+
+    while index < len(lines):
+
+        line = lines[index].strip()
 
         if not line:
-            story.append(Spacer(1, 8))
+            story.append(Spacer(1, 5))
+            index += 1
             continue
 
-        if line.startswith("# "):
+        # ----------------------------------
+        # MARKDOWN TABLES
+        # ----------------------------------
+
+        if line.startswith("|") and line.endswith("|"):
+
+            table_rows = []
+
+            while index < len(lines):
+
+                current = lines[index].strip()
+
+                if not (
+                    current.startswith("|")
+                    and current.endswith("|")
+                ):
+                    break
+
+                cells = [
+                    cell.strip()
+                    for cell in current.strip("|").split("|")
+                ]
+
+                # Ignore Markdown table separator row
+                if all(
+                    re.match(r"^:?-{3,}:?$", cell)
+                    for cell in cells
+                ):
+                    index += 1
+                    continue
+
+                table_rows.append(cells)
+
+                index += 1
+
+            if table_rows:
+
+                column_count = max(
+                    len(row) for row in table_rows
+                )
+
+                formatted_rows = []
+
+                for row_number, row in enumerate(table_rows):
+
+                    row = row + [""] * (
+                        column_count - len(row)
+                    )
+
+                    formatted_row = []
+
+                    for cell in row:
+
+                        formatted_row.append(
+                            Paragraph(
+                                format_text(cell),
+                                styles["ReportBody"]
+                            )
+                        )
+
+                    formatted_rows.append(formatted_row)
+
+                available_width = A4[0] - 40 * mm
+
+                table = Table(
+                    formatted_rows,
+                    colWidths=[
+                        available_width / column_count
+                    ] * column_count,
+                    repeatRows=1,
+                    hAlign="LEFT"
+                )
+
+                table.setStyle(
+                    TableStyle([
+                        (
+                            "BACKGROUND",
+                            (0, 0),
+                            (-1, 0),
+                            colors.HexColor("#173B63")
+                        ),
+                        (
+                            "TEXTCOLOR",
+                            (0, 0),
+                            (-1, 0),
+                            colors.white
+                        ),
+                        (
+                            "BACKGROUND",
+                            (0, 1),
+                            (-1, -1),
+                            colors.HexColor("#F1F6FA")
+                        ),
+                        (
+                            "GRID",
+                            (0, 0),
+                            (-1, -1),
+                            0.5,
+                            colors.HexColor("#D6E1EA")
+                        ),
+                        (
+                            "VALIGN",
+                            (0, 0),
+                            (-1, -1),
+                            "TOP"
+                        ),
+                        (
+                            "LEFTPADDING",
+                            (0, 0),
+                            (-1, -1),
+                            7
+                        ),
+                        (
+                            "RIGHTPADDING",
+                            (0, 0),
+                            (-1, -1),
+                            7
+                        ),
+                        (
+                            "TOPPADDING",
+                            (0, 0),
+                            (-1, -1),
+                            7
+                        ),
+                        (
+                            "BOTTOMPADDING",
+                            (0, 0),
+                            (-1, -1),
+                            7
+                        )
+                    ])
+                )
+
+                story.append(table)
+                story.append(Spacer(1, 12))
+
+            continue
+
+        # ----------------------------------
+        # MAIN SECTION HEADINGS
+        # ----------------------------------
+
+        if line.startswith("## "):
 
             story.append(
                 Paragraph(
-                    escape(line[2:]),
-                    styles["Title"]
+                    format_text(line[3:]),
+                    styles["SectionHeading"]
                 )
             )
 
-        elif line.startswith("## "):
-
-            story.append(
-                Paragraph(
-                    escape(line[3:]),
-                    styles["Heading2"]
-                )
-            )
+        # ----------------------------------
+        # SUBHEADINGS
+        # ----------------------------------
 
         elif line.startswith("### "):
 
             story.append(
                 Paragraph(
-                    escape(line[4:]),
-                    styles["Heading3"]
+                    format_text(line[4:]),
+                    styles["SubHeading"]
                 )
             )
+
+        # ----------------------------------
+        # BULLET POINTS
+        # ----------------------------------
 
         elif line.startswith("- ") or line.startswith("* "):
 
             story.append(
                 Paragraph(
-                    "&#8226; " + escape(line[2:]),
-                    styles["BodyText"]
+                    "&#8226; " + format_text(line[2:]),
+                    styles["ReportBody"]
                 )
             )
+
+        # ----------------------------------
+        # NORMAL TEXT
+        # ----------------------------------
 
         else:
 
             story.append(
                 Paragraph(
-                    escape(line),
-                    styles["BodyText"]
+                    format_text(line),
+                    styles["ReportBody"]
                 )
             )
 
-        story.append(Spacer(1, 5))
+        story.append(Spacer(1, 3))
 
-    pdf.build(story)
+        index += 1
+
+    # Build PDF
+    pdf.build(
+        story,
+        onFirstPage=draw_page,
+        onLaterPages=draw_page
+    )
 
     buffer.seek(0)
 
     return buffer.getvalue()
+
 
 
 
