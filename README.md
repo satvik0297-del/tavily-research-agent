@@ -29,6 +29,11 @@ references. The report can be downloaded as a PDF.
 **Live application:** [Open Tavily Research
 Agent](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/)
 
+## Application Preview
+
+### 1. Application Home Page
+![Application Home Page](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Application%20Home.png?raw=true)
+
 ## Key features
 
 -   **Research planning:** Gemini breaks the topic into focused research
@@ -240,6 +245,9 @@ Open the local URL printed in the terminal (usually
 
 **Example topic:**\
 `How is artificial intelligence changing healthcare, education, and software development?`
+
+### 2. Generated Research Report
+![Generated Research Report](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Research%20Report.png?raw=true)
 
 ## Configuration and security
 
