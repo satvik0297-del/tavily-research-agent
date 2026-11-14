@@ -1,4 +1,3 @@
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/80858c3a-d886-4a54-b80d-8d52b3d95af0" />[README.md](https://github.com/user-attachments/files/34860134/README.md)
 # 🔎 Tavily Research Agent
 
 **AI-powered web research and report generation using Tavily Search,
