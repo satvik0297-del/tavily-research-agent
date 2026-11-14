@@ -1,210 +1,313 @@
-# 🔍 Tavily Research Agent
-### AI-Powered Web Research and Report Generation
+[README.md](https://github.com/user-attachments/files/34860134/README.md)
+# 🔎 Tavily Research Agent
 
-An AI-powered research application that combines "Tavily Search API" and "Google Gemini" to collect web information, analyse retrieved content, and generate structured research reports with source references.
+**AI-powered web research and report generation using Tavily Search,
+Google Gemini, and Streamlit.**
 
-🚀 Overview
+[![Open Live
+App](https://img.shields.io/badge/Live%20App-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Powered by
+Tavily](https://img.shields.io/badge/Search-Tavily-5A45FF)](https://tavily.com/)
+[![Powered by
+Gemini](https://img.shields.io/badge/LLM-Google%20Gemini-4285F4)](https://ai.google.dev/)
 
-Researching a topic often requires visiting multiple websites, collecting information, comparing findings, and organising everything into a readable report.
+## Overview
 
-The Tavily Research Agent simplifies this process by automating web search and AI-powered research synthesis.
+Researching a topic manually can involve searching many websites,
+comparing information, identifying gaps, and preparing a structured
+report. **Tavily Research Agent** streamlines this process in a web
+application.
 
-Users enter a research topic, Tavily retrieves relevant web sources, and Gemini analyses the collected information to generate a structured Markdown report.
+A user enters a topic and chooses a research depth. Google Gemini
+creates focused research questions and analyses the collected evidence.
+Tavily Search retrieves relevant web results. The application organises
+unique sources, may request a limited follow-up search when evidence
+appears incomplete, and asks Gemini to generate a structured report with
+references. The report can be downloaded as a PDF.
 
-🎯 Problem Statement
+**Live application:** [Open Tavily Research
+Agent](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/)
 
-Manual web research can be time-consuming because users need to:
+## Key features
 
-- Search across multiple websites.
-- Read and organise information from different sources.
-- Identify important findings and trends.
-- Prepare structured research summaries.
-- Keep track of the original sources.
+-   **Research planning:** Gemini breaks the topic into focused research
+    questions.
+-   **Web search:** Tavily performs advanced web searches for the
+    generated questions.
+-   **Evidence collection:** Search results are organised and duplicate
+    URLs are removed.
+-   **Evidence review:** Gemini assesses whether the collected evidence
+    is sufficient and can suggest follow-up queries.
+-   **Bounded research loop:** The workflow limits the number of
+    research rounds and searches.
+-   **Structured report generation:** Gemini creates an organised
+    Markdown report using the collected evidence.
+-   **Source references:** The report maps generated source IDs to URLs
+    returned by Tavily and includes a references section.
+-   **Research depth options:** Quick, Standard, and Detailed modes
+    adjust question and result limits.
+-   **PDF export:** Users can download the generated report.
+-   **Error handling and retries:** The application checks for missing
+    API credentials, handles research errors, and retries failed Gemini
+    requests.
 
-The project aims to reduce this effort through an integrated web-search and AI-report-generation workflow.
+> **Transparency note:** Source IDs are mapped to URLs returned by
+> Tavily. The current prototype does not independently verify every
+> factual claim against the full source webpage. Report quality depends
+> on the retrieved search evidence and the model's synthesis.
 
-💡 Our Solution
+## How it works
 
-The Tavily Research Agent combines web search and generative AI in a simple Python application.
+1.  **User input:** The user enters a research topic and chooses Quick,
+    Standard, or Detailed.
+2.  **Planning:** Gemini creates focused research questions.
+3.  **Search:** Tavily searches the web for each question.
+4.  **Collection:** Results are stored by URL to avoid duplicate
+    sources.
+5.  **Evidence review:** Gemini assesses evidence coverage and
+    identifies possible gaps.
+6.  **Follow-up:** If evidence is insufficient, the workflow can perform
+    a bounded follow-up search.
+7.  **Synthesis:** Gemini generates a structured report grounded in the
+    collected evidence.
+8.  **Output:** The app displays the report, search statistics, source
+    links, and a PDF download option.
 
-**The workflow:**
+## Architecture
 
-1. The user enters a research topic.
-2. Tavily searches the web for relevant information.
-3. The application collects up to five search results.
-4. Gemini analyses the retrieved content.
-5. The application generates a structured Markdown research report.
-6. The report includes inline source links and a references section.
-
-✨ Current Features
-
-- Automated Web Search: Uses Tavily to retrieve relevant web information.
-- Advanced Search: Uses Tavily's advanced search depth.
-- AI-Powered Analysis: Uses Google Gemini to synthesise collected research.
-- Structured Reports: Generates executive summaries, key insights, analysis, recommendations and references.
-- Source References: Includes links to the original URLs returned by Tavily.
-- Error Handling: Handles missing credentials, empty results and API errors.
-- Secure API Configuration: Retrieves API keys from Google Colab Secrets instead of hardcoding credentials.
-
-🛠️ Technology Stack
-
-| Technology | Purpose |
-|---|---|
-| Python | Main programming language |
-| Tavily Search API | Web search and information retrieval |
-| Tavily Python SDK | Python integration with Tavily |
-| Google Gemini API | Research synthesis and report generation |
-| `google-genai` | Python integration with Gemini |
-| IPython Markdown | Displays formatted research reports |
-| Google Colab | Development and execution environment |
-
-⚙️ Project Architecture
-
-```text
-             USER
-               |
-               v
-       Research Topic Input
-               |
-               v
-        Tavily Search API
-               |
-               v
-       Retrieve Web Sources
-               |
-               v
-       Organise Search Data
-               |
-               v
-        Google Gemini API
-               |
-               v
-       Research Synthesis
-               |
-               v
-       Markdown Report
-               |
-               v
-      Sources and References
+``` text
+                 User
+                  |
+                  v
+       Streamlit topic + depth input
+                  |
+                  v
+        Gemini Research Planner
+       (focused research questions)
+                  |
+                  v
+          Tavily Search API
+       (search each question)
+                  |
+                  v
+       Evidence Collector
+     (store results, deduplicate URLs)
+                  |
+                  v
+        Gemini Evidence Review
+       (coverage, gaps, follow-ups)
+                  |
+          evidence sufficient?
+             /          \
+           yes           no
+            |             |
+            |       Bounded follow-up
+            |         Tavily search
+            |             |
+            +-------------+
+                  |
+                  v
+        Gemini Report Generator
+                  |
+                  v
+      Markdown report + source links
+                  |
+          Streamlit results UI
+                  |
+                  v
+             PDF download
 ```
-📋 Requirements
 
-- Python 3.10 or later (recommended).
-- Google account with access to Google Colab.
-- Tavily API key.
-- Google Gemini API key.
-- Internet connection.
+## Research depth
 
-🚀 Getting Started
+The current settings in `app.py` are:
 
-1. Clone the repository
+  Mode         Planned questions   Results per search   Follow-up allowance
+  ---------- ------------------- -------------------- ---------------------
+  Quick                        2                    2                     1
+  Standard                     4                    3                     2
+  Detailed                     4                    5                     2
 
-```bash
+The workflow also has a maximum of two evidence-review rounds. Actual
+search counts can be lower when evidence is sufficient or when the
+search limit is reached.
+
+## Technology stack
+
+  -----------------------------------------------------------------------
+  Technology                          Purpose
+  ----------------------------------- -----------------------------------
+  Python                              Main application language
+
+  Streamlit                           Interactive web interface and
+                                      deployment
+
+  Tavily Search API                   Web search and retrieval
+
+  `tavily-python`                     Python SDK for Tavily
+
+  Google Gemini API                   Research planning, evidence review,
+                                      and report synthesis
+
+  `google-genai`                      Python SDK for Gemini
+
+  ReportLab                           PDF report generation
+
+  IPython                             Retained as a project dependency
+                                      for notebook development
+
+  Google Colab                        Original notebook development
+                                      environment
+
+  Streamlit Community Cloud           Hosting the web application
+  -----------------------------------------------------------------------
+
+## Repository structure
+
+``` text
+tavily-research-agent/
+├── app.py
+├── requirements.txt
+├── README.md
+└── Tavily_Research_Agent.ipynb
+```
+
+-   `app.py` --- Streamlit application, research workflow, and PDF
+    export.
+-   `requirements.txt` --- Python dependencies.
+-   `README.md` --- Project documentation.
+-   `Tavily_Research_Agent.ipynb` --- Original Google Colab notebook
+    prototype.
+
+## Run locally
+
+### 1. Clone the repository
+
+``` bash
 git clone https://github.com/satvik0297-del/tavily-research-agent.git
+cd tavily-research-agent
 ```
 
-Replace `YOUR-USERNAME` with your GitHub username.
+### 2. Install dependencies
 
-2. Open Google Colab
+Use Python 3.10 or later.
 
-Open the project notebook:
-
-`Tavily_Research_Agent.ipynb`
-
-Upload it to Google Colab or open it from your GitHub repository.
-
-3. Configure API keys securely
-
-In Google Colab:
-
-1. Open the Secrets panel using the key icon on the left sidebar.
-2. Add a secret named `TAVILY_API_KEY`.
-3. Add another secret named `GEMINI_API_KEY`.
-4. Paste the respective API keys into their secret values.
-5. Enable notebook access for both secrets.
-
-The notebook retrieves credentials using:
-
-```python
-from google.colab import userdata
-
-TAVILY_API_KEY = userdata.get("TAVILY_API_KEY")
-GEMINI_API_KEY = userdata.get("GEMINI_API_KEY")
+``` bash
+python -m venv .venv
 ```
 
-**Never upload actual API keys to GitHub.**
+Activate the environment:
 
-4. Install dependencies
+**Windows PowerShell**
 
-The notebook installs the required libraries:
-
-```bash
-pip install -q --upgrade tavily-python google-genai
+``` powershell
+.venv\Scripts\Activate.ps1
 ```
 
-5. Run the notebook
+**macOS / Linux**
 
-Run the notebook cells in order.
-
-Enter a research topic when prompted.
-
-Example:
-
-```text
-Artificial Intelligence: Latest Developments
+``` bash
+source .venv/bin/activate
 ```
 
-The application will search the web and generate a structured research report.
+Install the project packages:
 
-📄 Report Structure
+``` bash
+pip install -r requirements.txt
+```
 
-The generated report contains:
+### 3. Configure API keys
 
-1. Executive Summary – Overview of the research topic and major findings.
-2. Key Insights & Analysis – Important findings, trends, opportunities and challenges.
-3. Actionable Takeaways / Future Outlook – Recommendations and possible future developments.
-4. Sources & References– Titles and original URLs of retrieved sources.
+The app needs: - `TAVILY_API_KEY` - `GEMINI_API_KEY`
 
-⚠️ Current Limitations
+For local development, create `.streamlit/secrets.toml` in the project
+directory:
 
-The current implementation is a single-pass research pipeline.
+``` toml
+TAVILY_API_KEY = "your_tavily_api_key"
+GEMINI_API_KEY = "your_gemini_api_key"
+```
 
-- It retrieves up to five web search results per topic.
-- It does not yet automatically create research sub-questions.
-- It does not perform iterative research or autonomous re-search.
-- Citations link to retrieved sources but are not independently validated against every factual claim.
-- Report quality depends on the relevance and quality of retrieved webpage content.
-- It currently runs through Google Colab rather than a standalone web interface.
+Do not commit this file or publish API keys. Add
+`.streamlit/secrets.toml` to `.gitignore`.
 
-These limitations are acknowledged as areas for future development.
+For the deployed app, configure the same two values in the app's
+**Streamlit Community Cloud → App settings → Secrets** area.
 
-🔮 Future Improvements
+### 4. Start the app
 
-Planned enhancements include:
+``` bash
+streamlit run app.py
+```
 
-- Research planning and automatic question decomposition.
-- Multiple focused web searches.
-- Evidence organisation and source-quality analysis.
-- Evidence-based citation validation.
-- Bounded iterative research when important information is missing.
-- Follow-up questions about generated reports.
-- PDF report export.
-- Interactive web interface using Streamlit.
+Open the local URL printed in the terminal (usually
+`http://localhost:8501`).
 
-👨‍💻 Project Information
+## Using the live application
 
-Project: Tavily Research Agent  
-Category: AI Agents & Intelligent Systems  
-Hackathon: HackCulture Global AI Hackathon  
-Core Technologies: Python, Tavily Search API and Google Gemini  
-Platform: Google Colab
+1.  Open the [live
+    app](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/).
+2.  Enter a clear research topic.
+3.  Choose Quick, Standard, or Detailed.
+4.  Click **Start Research**.
+5.  Wait for the research process to complete.
+6.  Review the report, statistics, and collected source links.
+7.  Click the PDF download button to save the report.
 
-🙌 Acknowledgements
+**Example topic:**\
+`How is artificial intelligence changing healthcare, education, and software development?`
 
-- [Tavily](https://tavily.com/) – Web search infrastructure for AI applications.
-- [Google Gemini](https://ai.google.dev/) – Generative AI capabilities.
-- [Google Colab](https://colab.research.google.com/) – Cloud-based Python development environment.
+## Configuration and security
 
----
+-   Never hardcode API keys in source files.
+-   Never commit `.streamlit/secrets.toml`, `.env`, or other credential
+    files.
+-   Keep Streamlit Cloud secrets private.
+-   If a key was accidentally committed, revoke it at the provider and
+    create a replacement; deleting it from the latest file alone is not
+    sufficient.
+-   Avoid sharing screenshots that show secret values.
 
-*Built as a hackathon prototype exploring AI-powered web research and automated report generation.*
+## Current limitations and future improvements
+
+This is a working hackathon prototype. Possible next improvements
+include:
+
+-   More robust Markdown-to-PDF formatting for tables, emphasis, and
+    links.
+-   Stronger source-quality assessment and independent claim-to-source
+    verification.
+-   Better handling of conflicting or outdated sources.
+-   Research history and the ability to revisit previous reports.
+-   Export to Markdown and DOCX.
+-   Automated tests with mocked Tavily and Gemini responses.
+-   More detailed progress indicators and clearer usage guidance.
+
+## Project information
+
+-   **Project:** Tavily Research Agent
+-   **Category:** AI Agents / Intelligent Research
+-   **Hackathon:** HackCulture Global AI Hackathon
+-   **Core technologies:** Python, Tavily Search API, Google Gemini,
+    Streamlit
+-   **Live demo:** [Streamlit
+    application](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/)
+-   **Source code:** [GitHub
+    repository](https://github.com/satvik0297-del/tavily-research-agent)
+
+## Acknowledgements
+
+-   [Tavily](https://tavily.com/) --- Web search infrastructure.
+-   [Google AI / Gemini](https://ai.google.dev/) --- Generative AI
+    models and API.
+-   [Streamlit](https://streamlit.io/) --- Interactive Python web
+    applications.
+-   [ReportLab](https://www.reportlab.com/) --- PDF generation.
+-   [Google Colab](https://colab.research.google.com/) --- Notebook
+    development environment.
+
+------------------------------------------------------------------------
+
+*Built as a hackathon prototype to explore AI-assisted web research,
+evidence review, and automated report generation.*
