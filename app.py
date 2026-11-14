@@ -1290,7 +1290,7 @@ st.divider()
 st.markdown(
     """
     <div style="text-align:center; color:#94A3B8; padding:15px;">
-        <b>🔍 Tavily Research Agent</b><br>
+        <b> Tavily Research Agent</b><br>
         AI-Powered Web Research and Report Generation<br>
         Built using Python, Tavily, Google Gemini and Streamlit
     </div>
