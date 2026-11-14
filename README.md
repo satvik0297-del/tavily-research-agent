@@ -123,11 +123,11 @@ Agent](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/)
 
 The current settings in `app.py` are:
 
-  Mode         Planned questions   Results per search   Follow-up allowance
-  ---------- ------------------- -------------------- ---------------------
-  Quick                        2                    2                     1
-  Standard                     4                    3                     2
-  Detailed                     4                    5                     2
+  Mode          Planned questions   Results per search   Follow-up allowance
+  ----------  ------------------- -------------------- ---------------------
+  Quick                         2                    2                     1
+  Standard                      4                    3                     2
+  Detailed                      4                    5                     2
 
 The workflow also has a maximum of two evidence-review rounds. Actual
 search counts can be lower when evidence is sufficient or when the
