@@ -123,45 +123,28 @@ Agent](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/)
 
 The current settings in `app.py` are:
 
-  Mode          Planned questions   Results per search   Follow-up allowance
-  ----------  ------------------- -------------------- ---------------------
-  Quick                         2                    2                     1
-  Standard                      4                    3                     2
-  Detailed                      4                    5                     2
+| Mode | Planned questions | Results per search | Follow-up allowance |
+|---|---:|---:|---:|
+| Quick | 2 | 2 | 1 |
+| Standard | 4 | 3 | 2 |
+| Detailed | 4 | 5 | 2 |
 
-The workflow also has a maximum of two evidence-review rounds. Actual
-search counts can be lower when evidence is sufficient or when the
-search limit is reached.
+The workflow also has a maximum of two evidence-review rounds. Actual search counts can be lower when evidence is sufficient or when the search limit is reached.
 
 ## Technology stack
 
-  -----------------------------------------------------------------------
-  Technology                          Purpose
-  ----------------------------------- -----------------------------------
-  Python                              Main application language
-
-  Streamlit                           Interactive web interface and
-                                      deployment
-
-  Tavily Search API                   Web search and retrieval
-
-  `tavily-python`                     Python SDK for Tavily
-
-  Google Gemini API                   Research planning, evidence review,
-                                      and report synthesis
-
-  `google-genai`                      Python SDK for Gemini
-
-  ReportLab                           PDF report generation
-
-  IPython                             Retained as a project dependency
-                                      for notebook development
-
-  Google Colab                        Original notebook development
-                                      environment
-
-  Streamlit Community Cloud           Hosting the web application
-  -----------------------------------------------------------------------
+| Technology | Purpose |
+|---|---|
+| Python | Main application language |
+| Streamlit | Interactive web interface and deployment |
+| Tavily Search API | Web search and retrieval |
+| `tavily-python` | Python SDK for Tavily |
+| Google Gemini API | Research planning, evidence review, and report synthesis |
+| `google-genai` | Python SDK for Gemini |
+| ReportLab | PDF report generation |
+| IPython | Retained as a project dependency for notebook development |
+| Google Colab | Original notebook development environment |
+| Streamlit Community Cloud | Hosting the web application |
 
 ## Repository structure
 
