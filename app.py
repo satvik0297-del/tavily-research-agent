@@ -981,40 +981,39 @@ def create_pdf(report):
 
                 index += 1
 
+           
             if table_rows:
 
                 column_count = max(
                     len(row) for row in table_rows
                 )
 
-               
-formatted_rows = []
+                formatted_rows = []
 
-for row_number, row in enumerate(table_rows):
+                for row_number, row in enumerate(table_rows):
 
-    row = row + [""] * (
-        column_count - len(row)
-    )
+                    row = row + [""] * (
+                        column_count - len(row)
+                    )
 
-    formatted_row = []
+                    formatted_row = []
 
-    for cell in row:
+                    for cell in row:
 
-        cell_style = (
-            styles["TableHeader"]
-            if row_number == 0
-            else styles["ReportBody"]
-        )
+                        cell_style = (
+                            styles["TableHeader"]
+                            if row_number == 0
+                            else styles["ReportBody"]
+                        )
 
-        formatted_row.append(
-            Paragraph(
-                format_text(cell),
-                cell_style
-            )
-        )
+                        formatted_row.append(
+                            Paragraph(
+                                format_text(cell),
+                                cell_style
+                            )
+                        )
 
-    formatted_rows.append(formatted_row)
-
+                    formatted_rows.append(formatted_row)
 
                 available_width = A4[0] - 40 * mm
 
