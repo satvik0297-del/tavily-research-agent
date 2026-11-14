@@ -1281,7 +1281,6 @@ if "final_report" in st.session_state:
             f"{index}. [{source['title']}]({source['url']})"
         )
         
-
 # ==========================================
 # APPLICATION FOOTER
 # ==========================================
@@ -1293,8 +1292,8 @@ footer_html = """
     <b>Tavily Research Agent</b><br>
     AI-Powered Web Research and Report Generation<br>
     Built using Python, Tavily, Google Gemini and Streamlit
-</div>
-"""
+</div> """
+
 
 st.markdown(
     footer_html,
