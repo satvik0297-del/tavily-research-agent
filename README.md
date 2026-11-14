@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/34860134/README.md)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/80858c3a-d886-4a54-b80d-8d52b3d95af0" />[README.md](https://github.com/user-attachments/files/34860134/README.md)
 # 🔎 Tavily Research Agent
 
 **AI-powered web research and report generation using Tavily Search,
@@ -248,6 +248,8 @@ Open the local URL printed in the terminal (usually
 
 ### 2. Generated Research Report
 ![Generated Research Report](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Research%20Report.png?raw=true)
+![Generated Research Report](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Research%20Report%20(2).png?raw=true)
+![Generated Research Report](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Research%20pdf.png?raw=true)
 
 ## Configuration and security
 
