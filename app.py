@@ -142,7 +142,7 @@ if not TAVILY_API_KEY or not GEMINI_API_KEY:
 # ==========================================
 
 PRIMARY_MODEL = "gemini-3.5-flash-lite"
-FALLBACK_MODEL = "gemini-3.5-flash-lite"
+FALLBACK_MODEL = "gemini-3.5-flash"
 
 MAX_RESEARCH_ROUNDS = 2
 
@@ -159,15 +159,13 @@ gemini_client = genai.Client(
 # 4. GEMINI CALL WITH SMART RETRIES
 # ==========================================
 
+
 def ask_gemini(prompt):
 
-    models = list(dict.fromkeys([
-        PRIMARY_MODEL,
-        FALLBACK_MODEL
-    ]))
+    models = [PRIMARY_MODEL, FALLBACK_MODEL]
 
     last_error = None
-    wait_times = [5, 10, 20]
+    wait_times = [5, 10]
 
     for model in models:
 
@@ -189,17 +187,31 @@ def ask_gemini(prompt):
 
                 last_error = error
 
-                st.warning(
-                    f"Gemini attempt {attempt + 1} failed. "
-                    "Retrying if possible..."
-                )
-
                 if attempt < 2:
+
+                    st.warning(
+                        f"{model}: attempt {attempt + 1}/3 failed. "
+                        f"Retrying in {wait_times[attempt]} seconds..."
+                    )
+
                     time.sleep(wait_times[attempt])
 
+                else:
+
+                    st.warning(
+                        f"{model} failed after 3 attempts."
+                    )
+
+        if model != models[-1]:
+
+            st.warning(
+                f"Switching to fallback model: {FALLBACK_MODEL}"
+            )
+
     raise RuntimeError(
-        f"Gemini failed after retries: {last_error}"
+        f"Gemini failed after all retries: {last_error}"
     )
+
 
 
 # ==========================================
@@ -769,6 +781,15 @@ def create_pdf(report):
             spaceAfter=7
         )
     )
+    
+    styles.add(
+    ParagraphStyle(
+        name="TableHeader",
+        parent=styles["ReportBody"],
+        textColor=colors.white,
+        fontName="Helvetica-Bold"
+    )
+)
 
     styles.add(
         ParagraphStyle(
@@ -978,13 +999,18 @@ def create_pdf(report):
 
                     for cell in row:
 
-                        formatted_row.append(
-                            Paragraph(
-                                format_text(cell),
-                                styles["ReportBody"]
-                            )
-                        )
+                      cell_style = (
+    styles["TableHeader"]
+    if row_number == 0
+    else styles["ReportBody"]
+)
 
+formatted_row.append(
+    Paragraph(
+        format_text(cell),
+        cell_style
+    )
+)
                     formatted_rows.append(formatted_row)
 
                 available_width = A4[0] - 40 * mm
