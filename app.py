@@ -30,14 +30,79 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🔍 Tavily Research Agent")
-st.subheader("AI-Powered Web Research and Report Generator")
+# ==========================================
+# CUSTOM APPLICATION STYLING
+# ==========================================
 
-st.write(
-    "Research any topic using Tavily search and Google Gemini."
-)
+st.markdown("""
+<style>
 
-st.divider()
+.stApp {
+    background-color: #0E1117;
+}
+
+.block-container {
+    max-width: 1150px;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.hero {
+    padding: 30px;
+    border-radius: 16px;
+    background: linear-gradient(
+        120deg,
+        #172554,
+        #1E3A8A,
+        #164E63
+    );
+    border: 1px solid #334155;
+    margin-bottom: 25px;
+}
+
+.hero h1 {
+    color: white;
+    font-size: 38px;
+    margin-bottom: 8px;
+}
+
+.hero p {
+    color: #DBEAFE;
+    font-size: 17px;
+}
+
+div.stButton > button {
+    border-radius: 10px;
+    height: 48px;
+    font-weight: 600;
+}
+
+div[data-testid="stMetric"] {
+    background: #1E293B;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+}
+
+footer {
+    visibility: hidden;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+
+st.markdown("""
+<div class="hero">
+    <h1>🔍 Tavily Research Agent</h1>
+    <p>
+        Your intelligent research assistant.
+        Search the web, analyse evidence,
+        and generate structured reports.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 
 # ==========================================
@@ -656,6 +721,47 @@ def create_pdf(report):
 # 12. STREAMLIT USER INTERFACE
 # ==========================================
 
+
+# ==========================================
+# SIDEBAR INFORMATION
+# ==========================================
+
+with st.sidebar:
+
+    st.title("🔍 Research Agent")
+
+    st.caption("AI-powered research workspace")
+
+    st.divider()
+
+    st.subheader("How to use")
+
+    st.write("1. Enter your research topic.")
+
+    st.write("2. Select research depth.")
+
+    st.write("3. Click Start Research.")
+
+    st.write("4. Review the generated report.")
+
+    st.write("5. Download your PDF.")
+
+    st.divider()
+
+    st.subheader("Research modes")
+
+    st.write("⚡ Quick — Faster research")
+
+    st.write("⚖️ Standard — Balanced research")
+
+    st.write("📚 Detailed — More search results")
+
+    st.divider()
+
+    st.caption(
+        "Powered by Tavily Search and Google Gemini."
+    )
+
 st.subheader("Start Your Research")
 
 topic = st.text_area(
@@ -759,3 +865,21 @@ if "final_report" in st.session_state:
         st.markdown(
             f"{index}. [{source['title']}]({source['url']})"
         )
+        
+# ==========================================
+# APPLICATION FOOTER
+# ==========================================
+
+st.divider()
+
+st.markdown(
+    """
+    <div style="text-align:center; color:#94A3B8; padding:15px;">
+        <b>🔍 Tavily Research Agent</b><br>
+        AI-Powered Web Research and Report Generation<br>
+        Built using Python, Tavily, Google Gemini and Streamlit
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
