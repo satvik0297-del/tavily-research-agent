@@ -51,7 +51,7 @@ Agent](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/)
     returned by Tavily and includes a references section.
 -   **Research depth options:** Quick, Standard, and Detailed modes
     adjust question and result limits.
--   **PDF export:** Users can download the generated report.
+-   **Professional PDF export:** Users can download formatted research reports with a cover page, styled headings, comparison tables, page numbers and clickable source links.
 -   **Error handling and retries:** The application checks for missing
     API credentials, handles research errors, and retries failed Gemini
     requests.
@@ -261,20 +261,24 @@ Open the local URL printed in the terminal (usually
     sufficient.
 -   Avoid sharing screenshots that show secret values.
 
-## Current limitations and future improvements
 
-This is a working hackathon prototype. Possible next improvements
-include:
+## Current Limitations and Future Improvements
 
--   More robust Markdown-to-PDF formatting for tables, emphasis, and
-    links.
--   Stronger source-quality assessment and independent claim-to-source
-    verification.
--   Better handling of conflicting or outdated sources.
--   Research history and the ability to revisit previous reports.
--   Export to Markdown and DOCX.
--   Automated tests with mocked Tavily and Gemini responses.
--   More detailed progress indicators and clearer usage guidance.
+This is a working hackathon prototype. While it supports AI-assisted research, evidence review and professional PDF report generation, several improvements are possible.
+
+Future improvements include:
+
+- Automatic generation of evidence-based charts and graphs.
+- Stronger source-quality assessment and independent claim-to-source verification.
+- Better handling of conflicting or outdated sources.
+- Research history and the ability to revisit previous reports.
+- Export to additional formats such as Markdown and DOCX.
+- Automated testing with mocked Tavily and Gemini responses.
+- More detailed research progress indicators.
+- Improved handling of temporary API failures and rate limits.
+
+The current prototype does not independently verify every factual claim against the full source webpage. Its output depends on retrieved evidence and AI-generated synthesis.
+
 
 ## Project information
 
