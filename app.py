@@ -7,6 +7,17 @@ import streamlit as st
 
 from tavily import TavilyClient
 from google import genai
+from io import BytesIO
+from xml.sax.saxutils import escape
+
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import mm
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer
+)
 
 
 # ==========================================
@@ -556,6 +567,89 @@ Return the report only.
     report += references
 
     return report
+    
+# ==========================================
+# PDF REPORT GENERATOR
+# ==========================================
+
+def create_pdf(report):
+
+    buffer = BytesIO()
+
+    pdf = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=20 * mm,
+        leftMargin=20 * mm,
+        topMargin=20 * mm,
+        bottomMargin=20 * mm
+    )
+
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    for line in report.split("\n"):
+
+        line = line.strip()
+
+        if not line:
+            story.append(Spacer(1, 8))
+            continue
+
+        if line.startswith("# "):
+
+            story.append(
+                Paragraph(
+                    escape(line[2:]),
+                    styles["Title"]
+                )
+            )
+
+        elif line.startswith("## "):
+
+            story.append(
+                Paragraph(
+                    escape(line[3:]),
+                    styles["Heading2"]
+                )
+            )
+
+        elif line.startswith("### "):
+
+            story.append(
+                Paragraph(
+                    escape(line[4:]),
+                    styles["Heading3"]
+                )
+            )
+
+        elif line.startswith("- ") or line.startswith("* "):
+
+            story.append(
+                Paragraph(
+                    "&#8226; " + escape(line[2:]),
+                    styles["BodyText"]
+                )
+            )
+
+        else:
+
+            story.append(
+                Paragraph(
+                    escape(line),
+                    styles["BodyText"]
+                )
+            )
+
+        story.append(Spacer(1, 5))
+
+    pdf.build(story)
+
+    buffer.seek(0)
+
+    return buffer.getvalue()
+
 
 
 # ==========================================
@@ -641,6 +735,20 @@ if "final_report" in st.session_state:
     st.markdown(
         st.session_state["final_report"]
     )
+    
+    # PDF DOWNLOAD BUTTON
+
+    pdf_file = create_pdf(
+        st.session_state["final_report"]
+    )
+
+    st.download_button(
+        label="📥 Download Research Report as PDF",
+        data=pdf_file,
+        file_name="Tavily_Research_Report.pdf",
+        mime="application/pdf"
+    )
+
 
     st.subheader("🔗 Collected Sources")
 
