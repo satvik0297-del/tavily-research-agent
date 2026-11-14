@@ -649,6 +649,7 @@ IMPORTANT PRESENTATION RULES:
 8. Keep all conclusions tied to the supplied evidence.
 
 Return the report only.
+"""
 
 
     report = ask_gemini(prompt)
@@ -1292,8 +1293,8 @@ footer_html = """
     <b>Tavily Research Agent</b><br>
     AI-Powered Web Research and Report Generation<br>
     Built using Python, Tavily, Google Gemini and Streamlit
-</div> """
-
+</div>
+"""
 
 st.markdown(
     footer_html,
