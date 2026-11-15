@@ -1241,7 +1241,8 @@ def build_meeting_briefing(
             )
 
             results = response.get("results", [])
-                        st.write(
+            
+            st.write(
                 "Sample publication dates:",
                 [
                     result.get("published_date")
