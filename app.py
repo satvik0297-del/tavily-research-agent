@@ -24,7 +24,7 @@ from reportlab.platypus import (
     Spacer,
     PageBreak,
     Table,
-    TableStyle
+    TableStyle,
     KeepInFrame
 )
 
