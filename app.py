@@ -1207,7 +1207,7 @@ def build_meeting_briefing(
 
     
 
-       # Prepare focused searches for different types
+          # Prepare focused searches for different types
     # of developments.
     search_queries = [
         f"{subject} latest news and important developments",
@@ -1227,6 +1227,8 @@ def build_meeting_briefing(
     evidence_store = {}
 
     # Search Tavily with the meeting-relative dates.
+    
+    for query in search_queries:
 
         try:
             st.write(f"Searching: {query}")
