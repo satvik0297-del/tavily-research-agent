@@ -4,6 +4,7 @@ import json
 import re
 import time
 import streamlit as st
+from email.utils import parsedate_to_datetime
 
 from tavily import TavilyClient
 from google import genai
@@ -1240,6 +1241,13 @@ def build_meeting_briefing(
             )
 
             results = response.get("results", [])
+                        st.write(
+                "Sample publication dates:",
+                [
+                    result.get("published_date")
+                    for result in results[:3]
+                ]
+            )
 
             st.write(
                 f"Results returned for this search: {len(results)}"
@@ -1253,15 +1261,27 @@ def build_meeting_briefing(
                 if not url or url in evidence_store:
                     continue
 
+                
+                # Require a usable publication date.
                 if not published_date:
                     continue
 
+                # Tavily may return ISO or RFC-formatted dates.
+                published_text = str(published_date).strip()
+
                 try:
-                    published_day = date.fromisoformat(
-                        str(published_date)[:10]
-                    )
-                except (ValueError, TypeError):
+                    try:
+                        published_day = date.fromisoformat(
+                            published_text[:10]
+                        )
+                    except ValueError:
+                        published_day = parsedate_to_datetime(
+                            published_text
+                        ).date()
+
+                except (ValueError, TypeError, OverflowError):
                     continue
+
 
                 if not (
                     start_date <= published_day <= end_date
