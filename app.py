@@ -158,7 +158,7 @@ BIFROST_BASE_URL = "http://localhost:8080/genai"
 gemini_client = genai.Client(
     api_key=BIFROST_VIRTUAL_KEY,
     http_options={
-        "base_url": "http://localhost:8080/genai",
+        "base_url": BIFROST_BASE_URL,
         "headers": {
             "x-bf-vk": BIFROST_VIRTUAL_KEY
         }
@@ -184,7 +184,7 @@ def ask_gemini(prompt):
             try:
 
                 response = gemini_client.models.generate_content(
-                   model=f"gemini/{model}",
+                   model=model,    
                    contents=prompt
                 )
 
