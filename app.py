@@ -1613,8 +1613,9 @@ def create_meeting_brief_pdf(briefing_data):
 
 
 
+
 # ==========================================
-# 12. STREAMLIT USER INTERFACE
+# 12. PRE-MEETING BRIEFING USER INTERFACE
 # ==========================================
 
 
@@ -1624,144 +1625,284 @@ def create_meeting_brief_pdf(briefing_data):
 
 with st.sidebar:
 
-    st.title("🔍 Research Agent")
+    st.title("📋 Meeting Briefing Agent")
 
-    st.caption("AI-powered research workspace")
+    st.caption("AI-powered meeting preparation")
 
     st.divider()
 
     st.subheader("How to use")
 
-    st.write("1. Enter your research topic.")
+    st.write("1. Enter a company or person's name.")
 
-    st.write("2. Select research depth.")
+    st.write("2. Add context and meeting purpose.")
 
-    st.write("3. Click Start Research.")
+    st.write("3. Select the scheduled meeting date and time.")
 
-    st.write("4. Review the generated report.")
+    st.write("4. Generate your briefing.")
 
-    st.write("5. Download your PDF.")
-
-    st.divider()
-
-    st.subheader("Research modes")
-
-    st.write("⚡ Quick — Faster research")
-
-    st.write("⚖️ Standard — Balanced research")
-
-    st.write("📚 Detailed — More search results")
+    st.write("5. Review the findings and download your PDF.")
 
     st.divider()
 
-    st.caption(
-        "Powered by Tavily Search and Google Gemini."
+    st.subheader("What the agent researches")
+
+    st.write("📰 Recent news and developments")
+
+    st.write("🚀 Product launches and announcements")
+
+    st.write("👥 Leadership changes and hires")
+
+    st.write("🤝 Partnerships and business updates")
+
+    st.write("💬 Discussion points and open questions")
+
+    st.divider()
+
+    st.caption("Powered by Tavily and Google Gemini.")
+
+
+# ==========================================
+# MEETING DETAILS FORM
+# ==========================================
+
+st.title("📋 Pre-Meeting Briefing Agent")
+
+st.write(
+    "Prepare for your next meeting with an AI-powered "
+    "research briefing covering important recent developments."
+)
+
+st.divider()
+
+st.subheader("Meeting Details")
+
+with st.form("meeting_briefing_form"):
+
+    subject = st.text_input(
+        "Company or Person",
+        placeholder="Example: Google, Microsoft, or Satya Nadella"
     )
 
-st.subheader("Start Your Research")
+    subject_context = st.text_area(
+        "Additional Context (Optional)",
+        placeholder=(
+            "Example: Technology company, AI strategy, "
+            "recent product developments..."
+        )
+    )
 
-topic = st.text_area(
-    "Enter your research topic:",
-    placeholder="Example: Latest developments in Artificial Intelligence"
-)
+    meeting_purpose = st.text_area(
+        "Meeting Purpose (Optional)",
+        placeholder=(
+            "Example: Partnership discussion, job interview, "
+            "investor meeting, business introduction..."
+        )
+    )
 
-depth = st.selectbox(
-    "Select Research Depth:",
-    ["Quick", "Standard", "Detailed"],
-    index=1
-)
+    st.write("**Scheduled Meeting**")
 
-if st.button("🚀 Start Research", type="primary"):
+    timezone_name = st.selectbox(
+        "Meeting Timezone",
+        [
+            "Asia/Kolkata",
+            "UTC",
+            "Europe/London",
+            "America/New_York"
+        ],
+        index=0
+    )
 
-    if not topic.strip():
+    local_today = datetime.now(
+        ZoneInfo(timezone_name)
+    ).date()
 
-        st.warning("Please enter a research topic.")
+    meeting_date = st.date_input(
+        "Meeting Date",
+        value=local_today
+    )
+
+    meeting_time = st.time_input(
+        "Meeting Time",
+        value=datetime.strptime(
+            "10:00",
+            "%H:%M"
+        ).time()
+    )
+
+    submitted = st.form_submit_button(
+        "🚀 Generate Meeting Briefing",
+        type="primary",
+        use_container_width=True
+    )
+
+
+# ==========================================
+# RUN MEETING RESEARCH
+# ==========================================
+
+if submitted:
+
+    if not subject.strip():
+
+        st.warning(
+            "Please enter a company or person's name."
+        )
 
     else:
 
         try:
 
+            research_context = subject_context.strip()
+
+            scheduled_time_context = (
+                f"Scheduled meeting: {meeting_date} "
+                f"at {meeting_time.strftime('%H:%M')} "
+                f"({timezone_name})."
+            )
+
+            if research_context:
+                research_context += "\n\n" + scheduled_time_context
+            else:
+                research_context = scheduled_time_context
+
             with st.status(
-                "Research in progress...",
+                "Preparing your meeting briefing...",
                 expanded=True
             ) as status:
 
-                research_data = perform_research(
-                    topic.strip(),
-                    depth
+                briefing_data = build_meeting_briefing(
+                    subject.strip(),
+                    research_context,
+                    meeting_purpose.strip(),
+                    meeting_date,
+                    timezone_name
                 )
 
-                report = generate_final_report(
-                    research_data
+                briefing_data["meeting_date"] = (
+                    f"{meeting_date.isoformat()} at "
+                    f"{meeting_time.strftime('%H:%M')} "
+                    f"({timezone_name})"
                 )
+
+                briefing_data["meeting_time"] = (
+                    meeting_time.strftime("%H:%M")
+                )
+
+                briefing_data["meeting_timezone"] = timezone_name
 
                 status.update(
-                    label="Research completed successfully!",
+                    label="Meeting briefing generated successfully!",
                     state="complete"
                 )
 
-            st.session_state["final_report"] = report
-            st.session_state["research_data"] = research_data
+            st.session_state["meeting_briefing"] = briefing_data
 
         except Exception as error:
 
-            st.error(f"Research failed: {error}")
+            st.error(
+                f"Meeting briefing generation failed: {error}"
+            )
 
 
 # ==========================================
-# 13. DISPLAY FINAL RESULTS
+# DISPLAY MEETING BRIEFING
 # ==========================================
 
-if "final_report" in st.session_state:
+if "meeting_briefing" in st.session_state:
 
-    research_data = st.session_state["research_data"]
+    briefing_data = st.session_state["meeting_briefing"]
 
     st.divider()
 
     st.subheader("📊 Research Statistics")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     col1.metric(
         "Total Searches",
-        research_data["total_searches"]
+        briefing_data["total_searches"]
     )
 
     col2.metric(
         "Unique Sources",
-        len(research_data["sources"])
+        len(briefing_data["sources"])
     )
 
-    st.subheader("📄 Final Research Report")
+    col3.metric(
+        "Research Window",
+        "30 Days"
+    )
+
+    st.divider()
+
+    st.subheader("📄 Your Pre-Meeting Briefing")
+
+    st.caption(
+        f"Prepared for {briefing_data['subject']} | "
+        f"Meeting: {briefing_data['meeting_date']}"
+    )
 
     st.markdown(
-        st.session_state["final_report"]
+        briefing_data["briefing"]
     )
-    
-    # PDF DOWNLOAD BUTTON
 
-    pdf_file = create_pdf(
-        st.session_state["final_report"]
+    st.divider()
+
+    # ==========================================
+    # PDF DOWNLOAD
+    # ==========================================
+
+    st.subheader("📥 Download Your Briefing")
+
+    pdf_file = create_meeting_brief_pdf(
+        briefing_data
+    )
+
+    safe_filename = re.sub(
+        r"[^a-zA-Z0-9_-]",
+        "_",
+        briefing_data["subject"]
     )
 
     st.download_button(
-        label="📥 Download Research Report as PDF",
+        label="📄 Download One-Page Meeting Briefing",
         data=pdf_file,
-        file_name="Tavily_Research_Report.pdf",
-        mime="application/pdf"
+        file_name=f"{safe_filename}_Meeting_Briefing.pdf",
+        mime="application/pdf",
+        type="primary",
+        use_container_width=True
     )
 
+    # ==========================================
+    # SOURCE REFERENCES
+    # ==========================================
 
-    st.subheader("🔗 Collected Sources")
+    st.divider()
+
+    st.subheader("🔗 Research Sources")
+
+    st.caption(
+        "Review the original sources behind the briefing."
+    )
 
     for index, source in enumerate(
-        research_data["sources"], 1
+        briefing_data["sources"],
+        1
     ):
 
-        st.markdown(
-            f"{index}. [{source['title']}]({source['url']})"
+        published = source.get(
+            "published_date",
+            "Date unavailable"
         )
-        
+
+        st.markdown(
+            f"**{index}. {source['title']}**  \n"
+            f"Published: {published}  \n"
+            f"[Read Original Source]({source['url']})"
+        )
+
+
 # ==========================================
 # APPLICATION FOOTER
 # ==========================================
@@ -1770,9 +1911,10 @@ st.divider()
 
 footer_html = """
 <div style="text-align:center; color:#94A3B8; padding:15px;">
-    <b>Tavily Research Agent</b><br>
-    AI-Powered Web Research and Report Generation<br>
-    Built using Python, Tavily, Google Gemini and Streamlit
+    <b>Pre-Meeting Briefing Agent</b><br>
+    AI-Powered Meeting Research and Preparation<br>
+    Built using Python, Tavily, Google Gemini and Streamlit<br><br>
+    <b>INTEGRATE BIFROST + TAVILY</b>
 </div>
 """
 
