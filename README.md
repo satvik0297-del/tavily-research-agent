@@ -303,6 +303,18 @@ The current prototype does not independently verify every factual claim against 
 -   [Google Colab](https://colab.research.google.com/) --- Notebook
     development environment.
 
+
+  ## Team Members
+
+**HackCulture Global AI Hackathon**
+
+This project, **Tavily Research Agent**, was undertaken as a team project by:
+
+- **[SATVIK KAPOOR]**
+- **[RAJ ARYAN MAGO]**
+
+We worked together as a team to bring this AI-powered research project to life.
+
 ------------------------------------------------------------------------
 
 *Built as a hackathon prototype to explore AI-assisted web research,
