@@ -1,4 +1,3 @@
-
 import os
 import json
 import re
@@ -130,12 +129,12 @@ def get_secret(key):
 
 
 TAVILY_API_KEY = get_secret("TAVILY_API_KEY")
-BIFROST_VIRTUAL_KEY = get_secret("BIFROST_VIRTUAL_KEY")
+GEMINI_API_KEY = get_secret("GEMINI_API_KEY")
 
-if not TAVILY_API_KEY or not BIFROST_VIRTUAL_KEY:
+if not TAVILY_API_KEY or not GEMINI_API_KEY:
     st.error(
         "API keys not configured. "
-        "Please configure TAVILY_API_KEY and BIFROST_VIRTUAL_KEY."
+        "Please configure TAVILY_API_KEY and GEMINI_API_KEY."
     )
     st.stop()
 
@@ -153,14 +152,7 @@ tavily_client = TavilyClient(
     api_key=TAVILY_API_KEY
 )
 
-BIFROST_BASE_URL = "http://localhost:8080/genai"
-
-gemini_client = genai.Client(
-    api_key=BIFROST_VIRTUAL_KEY,
-    http_options={
-        "base_url": BIFROST_BASE_URL
-    }
-)
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # ==========================================
 # 4. GEMINI CALL WITH SMART RETRIES
@@ -1973,7 +1965,6 @@ footer_html = """
     <b>Pre-Meeting Briefing Agent</b><br>
     AI-Powered Meeting Research and Preparation<br>
     Built using Python, Tavily, Google Gemini and Streamlit<br><br>
-    <b>INTEGRATE BIFROST + TAVILY</b>
 </div>
 """
 
