@@ -1246,16 +1246,15 @@ def build_meeting_briefing(
             results = response.get("results", [])
 
             st.write(
-    "Sample publication dates:",
-    [
-        result.get("published_date")
-        for result in results[:3]
-    ]
-)
+                "Sample publication dates:",
+                [
+                    result.get("published_date")
+                    for result in results[:3]
+                ]
+            )
 
-if results:
-    st.write("Result keys:", list(results[0].keys()))
-            
+            if results:
+                st.write("Result keys:", list(results[0].keys()))
            
 
             st.write(
