@@ -1,321 +1,144 @@
-# 🔎 Tavily Research Agent
+<div align="center">
 
-**AI-powered web research and report generation using Tavily Search,
-Google Gemini, and Streamlit.**
+# 🧠 Pre-Meeting Briefing Agent
 
-[![Open Live
-App](https://img.shields.io/badge/Live%20App-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://tavily-research-agent-bbvuzfysablls7fow3ye.streamlit.app/)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Powered by
-Tavily](https://img.shields.io/badge/Search-Tavily-5A45FF)](https://tavily.com/)
-[![Powered by
-Gemini](https://img.shields.io/badge/LLM-Google%20Gemini-4285F4)](https://ai.google.dev/)
+### Walk into every meeting already knowing what happened this month.
 
-## Overview
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white)
+![Tavily](https://img.shields.io/badge/Research-Tavily-6C5CE7)
+![Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=google&logoColor=white)
+![Hackathon](https://img.shields.io/badge/Geek%20Room%20x%20HackCulture-AI%20Hackathon%202026-ec4899)
 
-Researching a topic manually can involve searching many websites,
-comparing information, identifying gaps, and preparing a structured
-report. **Tavily Research Agent** streamlines this process in a web
-application.
+**🚀 [Try the live app](ADD-YOUR-STREAMLIT-LINK-HERE)**
 
-A user enters a topic and chooses a research depth. Google Gemini
-creates focused research questions and analyses the collected evidence.
-Tavily Search retrieves relevant web results. The application organises
-unique sources, may request a limited follow-up search when evidence
-appears incomplete, and asks Gemini to generate a structured report with
-references. The report can be downloaded as a PDF.
+</div>
 
-**Live application:** [Open Tavily Research
-Agent](https://tavily-research-agent-bbvvuzfysablls7fovw3ye.streamlit.app/~/+/#tavily-research-agent)
+---
 
-## Application Preview
+## 😩 The problem
 
-### 1. Application Home Page
-![Application Home Page](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Application%20Home.png?raw=true)
+Before an important meeting you end up with 15 browser tabs, half-remembered headlines, and AI summaries that sound confident but may be **made up**.
 
-## Key features
+## ✨ Our solution
 
--   **Research planning:** Gemini breaks the topic into focused research
-    questions.
--   **Web search:** Tavily performs advanced web searches for the
-    generated questions.
--   **Evidence collection:** Search results are organised and duplicate
-    URLs are removed.
--   **Evidence review:** Gemini assesses whether the collected evidence
-    is sufficient and can suggest follow-up queries.
--   **Bounded research loop:** The workflow limits the number of
-    research rounds and searches.
--   **Structured report generation:** Gemini creates an organised
-    Markdown report using the collected evidence.
--   **Source references:** The report maps generated source IDs to URLs
-    returned by Tavily and includes a references section.
--   **Research depth options:** Quick, Standard, and Detailed modes
-    adjust question and result limits.
--   **Professional PDF export:** Users can download formatted research reports with a cover page, styled headings, comparison tables, page numbers and clickable source links.
--   **Error handling and retries:** The application checks for missing
-    API credentials, handles research errors, and retries failed Gemini
-    requests.
+Type a **company or person** and a **meeting date**. In about a minute you get a **one-page, source-backed briefing** covering the **previous 30 days**: news, launches, hires, business moves, plus **discussion points** and **open questions** you can actually use in the room.
 
-> **Transparency note:** Source IDs are mapped to URLs returned by
-> Tavily. The current prototype does not independently verify every
-> factual claim against the full source webpage. Report quality depends
-> on the retrieved search evidence and the model's synthesis.
+Every finding has a **dated source link**. Anything we couldn't verify goes into an **Evidence Gaps** section instead of being invented.
 
-## How it works
+---
 
-1.  **User input:** The user enters a research topic and chooses Quick,
-    Standard, or Detailed.
-2.  **Planning:** Gemini creates focused research questions.
-3.  **Search:** Tavily searches the web for each question.
-4.  **Collection:** Results are stored by URL to avoid duplicate
-    sources.
-5.  **Evidence review:** Gemini assesses evidence coverage and
-    identifies possible gaps.
-6.  **Follow-up:** If evidence is insufficient, the workflow can perform
-    a bounded follow-up search.
-7.  **Synthesis:** Gemini generates a structured report grounded in the
-    collected evidence.
-8.  **Output:** The app displays the report, search statistics, source
-    links, and a PDF download option.
+## 🔄 How it works
 
-## Architecture
-
-``` text
-                 User
-                  |
-                  v
-       Streamlit topic + depth input
-                  |
-                  v
-        Gemini Research Planner
-       (focused research questions)
-                  |
-                  v
-          Tavily Search API
-       (search each question)
-                  |
-                  v
-       Evidence Collector
-     (store results, deduplicate URLs)
-                  |
-                  v
-        Gemini Evidence Review
-       (coverage, gaps, follow-ups)
-                  |
-          evidence sufficient?
-             /          \
-           yes           no
-            |             |
-            |       Bounded follow-up
-            |         Tavily search
-            |             |
-            +-------------+
-                  |
-                  v
-        Gemini Report Generator
-                  |
-                  v
-      Markdown report + source links
-                  |
-          Streamlit results UI
-                  |
-                  v
-             PDF download
+```
+ 📝 You enter              🔎 Tavily                 🧹 Filter & clean          🤖 Gemini               📄 You get
+ company / person   ->   6 focused web      ->    keep only sources    ->   writes the        ->   briefing in app
+ date, time, zone        searches                 from the 30-day           briefing from           + one-page PDF
+ purpose, context                                 window, remove dupes      the evidence only
 ```
 
-## Research depth
+| Step | What happens |
+|------|--------------|
+| 1. Input | Name, context, meeting purpose, date, time, timezone |
+| 2. Research | 6 focused Tavily searches: news, launches, leadership and hires, business developments, announcements, other updates |
+| 3. Filter | Reads publication dates, keeps `meeting date - 30 days` to `meeting date - 1 day`, removes duplicates |
+| 4. Analyse | Gemini writes the briefing using only the collected evidence |
+| 5. Export | Read it in the app or download the PDF |
 
-The current settings in `app.py` are:
+---
 
-| Mode | Planned questions | Results per search | Follow-up allowance |
-|---|---:|---:|---:|
-| Quick | 2 | 2 | 1 |
-| Standard | 4 | 3 | 2 |
-| Detailed | 4 | 5 | 2 |
+## 📋 What's inside every briefing
 
-The workflow also has a maximum of two evidence-review rounds. Actual search counts can be lower when evidence is sufficient or when the search limit is reached.
+| Section | Why it helps |
+|---------|--------------|
+| 🎯 Executive Snapshot | Understand the whole situation in 20 seconds |
+| 📰 Important Recent Developments | What actually happened, with dates and links |
+| 🤝 What This Means for the Meeting | Connects the news to *your* meeting purpose |
+| 💬 Suggested Discussion Points | Ready-made talking points |
+| ❓ Open Questions | Smart questions to ask |
+| ⚠️ Evidence Gaps | What we could not confirm, shown honestly |
+| 🔗 Research Sources | Every link so you can verify |
 
-## Technology stack
+---
 
-| Technology | Purpose |
-|---|---|
-| Python | Main application language |
-| Streamlit | Interactive web interface and deployment |
-| Tavily Search API | Web search and retrieval |
-| `tavily-python` | Python SDK for Tavily |
-| Google Gemini API | Research planning, evidence review, and report synthesis |
-| `google-genai` | Python SDK for Gemini |
-| ReportLab | PDF report generation |
-| IPython | Retained as a project dependency for notebook development |
-| Google Colab | Original notebook development environment |
-| Streamlit Community Cloud | Hosting the web application |
+## 🛡️ Built to avoid made-up facts
 
-## Repository structure
+- ✅ Every claim comes from a **dated, linked source**
+- ✅ Sources **outside the 30-day window are excluded**
+- ✅ Duplicate sources are removed
+- ✅ Unknown or missing info is flagged under **Evidence Gaps**
+- ✅ Retries plus a **fallback Gemini model** so the demo stays reliable
 
-``` text
-tavily-research-agent/
-├── app.py
-├── requirements.txt
-├── README.md
-└── Tavily_Research_Agent.ipynb
-```
+---
 
--   `app.py` --- Streamlit application, research workflow, and PDF
-    export.
--   `requirements.txt` --- Python dependencies.
--   `README.md` --- Project documentation.
--   `Tavily_Research_Agent.ipynb` --- Original Google Colab notebook
-    prototype.
+## 🧰 Tech stack
 
-## Run locally
+| Part | Tool |
+|------|------|
+| Interface | Streamlit |
+| Web research | Tavily Search API |
+| AI analysis | Google Gemini API (`google-genai`) |
+| PDF export | ReportLab |
+| Language | Python |
 
-### 1. Clone the repository
+---
 
-``` bash
-git clone https://github.com/satvik0297-del/tavily-research-agent.git
-cd tavily-research-agent
-```
+## ▶️ Run it yourself
 
-### 2. Install dependencies
-
-Use Python 3.10 or later.
-
-``` bash
-python -m venv .venv
-```
-
-Activate the environment:
-
-**Windows PowerShell**
-
-``` powershell
-.venv\Scripts\Activate.ps1
-```
-
-**macOS / Linux**
-
-``` bash
-source .venv/bin/activate
-```
-
-Install the project packages:
-
-``` bash
+```bash
+# 1. Install requirements
 pip install -r requirements.txt
-```
 
-### 3. Configure API keys
+# 2. Add your keys in .streamlit/secrets.toml
+#    TAVILY_API_KEY = "your-tavily-key"
+#    GEMINI_API_KEY = "your-gemini-key"
 
-The app needs: - `TAVILY_API_KEY` - `GEMINI_API_KEY`
-
-For local development, create `.streamlit/secrets.toml` in the project
-directory:
-
-``` toml
-TAVILY_API_KEY = "your_tavily_api_key"
-GEMINI_API_KEY = "your_gemini_api_key"
-```
-
-Do not commit this file or publish API keys. Add
-`.streamlit/secrets.toml` to `.gitignore`.
-
-For the deployed app, configure the same two values in the app's
-**Streamlit Community Cloud → App settings → Secrets** area.
-
-### 4. Start the app
-
-``` bash
+# 3. Start the app
 streamlit run app.py
 ```
 
-Open the local URL printed in the terminal (usually
-`http://localhost:8501`).
+🔒 `secrets.toml` is git-ignored. Never commit your keys.
 
-## Using the live application
+---
 
-1.  Open the [live
-    app](https://tavily-research-agent-bbvvuzfysablls7fovw3ye.streamlit.app/~/+/#tavily-research-agent).
-2.  Enter a clear research topic.
-3.  Choose Quick, Standard, or Detailed.
-4.  Click **Start Research**.
-5.  Wait for the research process to complete.
-6.  Review the report, statistics, and collected source links.
-7.  Click the PDF download button to save the report.
+## 🧪 Tested with
 
-**Example topic:**\
-`How is artificial intelligence changing healthcare, education, and software development?`
+- 🏢 Google
+- 🏢 Microsoft
+- 👤 Sundar Pichai
 
-### 2. Generated Research Report
-![Generated Research Report](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Research%20Report.png?raw=true)
-![Generated Research Report](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Research%20Report%20(2).png?raw=true)
-![Generated Research Report](https://github.com/satvik0297-del/tavily-research-agent/blob/main/Research%20pdf.png?raw=true)
+---
 
-## Configuration and security
+## 🔌 A note on Bifrost
 
--   Never hardcode API keys in source files.
--   Never commit `.streamlit/secrets.toml`, `.env`, or other credential
-    files.
--   Keep Streamlit Cloud secrets private.
--   If a key was accidentally committed, revoke it at the provider and
-    create a replacement; deleting it from the latest file alone is not
-    sufficient.
--   Avoid sharing screenshots that show secret values.
+The challenge suggests Bifrost for model requests. We installed it locally, configured Gemini as a provider, and successfully sent a Gemini request through its OpenAI-compatible endpoint. We could not get the Google GenAI SDK route working inside our app in time, so the final version calls Gemini directly. Bifrost is not part of the final app.
 
+---
 
-## Current Limitations and Future Improvements
+## ⚠️ Limitations
 
-This is a working hackathon prototype. While it supports AI-assisted research, evidence review and professional PDF report generation, several improvements are possible.
+- Quality depends on what Tavily can find and date. Lesser-known companies or people may get thinner briefings.
+- Treat the briefing as preparation. Verify critical facts in the linked sources.
 
-Future improvements include:
+---
 
-- Automatic generation of evidence-based charts and graphs.
-- Stronger source-quality assessment and independent claim-to-source verification.
-- Better handling of conflicting or outdated sources.
-- Research history and the ability to revisit previous reports.
-- Export to additional formats such as Markdown and DOCX.
-- Automated testing with mocked Tavily and Gemini responses.
-- More detailed research progress indicators.
-- Improved handling of temporary API failures and rate limits.
+## 👥 Team
 
-The current prototype does not independently verify every factual claim against the full source webpage. Its output depends on retrieved evidence and AI-generated synthesis.
+| Member | Contribution |
+|--------|--------------|
+| **Satvik** | ADD-ROLE (for example: app design, Python code, Tavily and Gemini integration, PDF export, deployment) |
+| **TEAMMATE-NAME** | ADD-ROLE (only what they really did, such as testing, research, docs, slides) |
 
+---
 
-## Project information
+## 🤖 AI assistance disclosure
 
--   **Project:** Tavily Research Agent
--   **Category:** AI Agents / Intelligent Research
--   **Hackathon:** HackCulture Global AI Hackathon
--   **Core technologies:** Python, Tavily Search API, Google Gemini,
-    Streamlit
--   **Live demo:** [Streamlit
-    application](https://tavily-research-agent-bbvvuzfysablls7fovw3ye.streamlit.app/~/+/#tavily-research-agent)
--   **Source code:** [GitHub
-    repository](https://github.com/satvik0297-del/tavily-research-agent)
+AI assistants were used for guidance and code help during development. Edit this line to match what you actually did and what the hackathon rules require.
 
-## Acknowledgements
+---
 
--   [Tavily](https://tavily.com/) --- Web search infrastructure.
--   [Google AI / Gemini](https://ai.google.dev/) --- Generative AI
-    models and API.
--   [Streamlit](https://streamlit.io/) --- Interactive Python web
-    applications.
--   [ReportLab](https://www.reportlab.com/) --- PDF generation.
--   [Google Colab](https://colab.research.google.com/) --- Notebook
-    development environment.
+<div align="center">
 
+Built for the **Geek Room x HackCulture Global AI Hackathon 2026** · Problem Statement 05
 
-  ## Team Members
-
-**HackCulture Global AI Hackathon**
-
-This project, **Tavily Research Agent**, was undertaken as a team project by:
-
-- **[SATVIK KAPOOR]**
-- **[RAJ ARYAN MAGO]**
-
-We worked together as a team to bring this AI-powered research project to life.
-
-------------------------------------------------------------------------
-
-*Built as a hackathon prototype to explore AI-assisted web research,
-evidence review, and automated report generation.*
+</div>
