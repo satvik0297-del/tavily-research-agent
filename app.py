@@ -1223,6 +1223,7 @@ def build_meeting_briefing(
     evidence_store = {}
 
     # Search Tavily with the meeting-relative dates.
+    
     for query in search_queries:
 
         try:
@@ -1235,10 +1236,14 @@ def build_meeting_briefing(
                 start_date=start_date.isoformat(),
                 end_date=end_date.isoformat(),
                 include_published_date=True,
-                filter_by_published_date=True
+                filter_by_published_date=False
             )
 
             results = response.get("results", [])
+
+            st.write(
+                f"Results returned for this search: {len(results)}"
+            )
 
             for result in results:
 
@@ -1248,7 +1253,6 @@ def build_meeting_briefing(
                 if not url or url in evidence_store:
                     continue
 
-                # Require a usable publication date.
                 if not published_date:
                     continue
 
@@ -1259,7 +1263,6 @@ def build_meeting_briefing(
                 except (ValueError, TypeError):
                     continue
 
-                # Apply our own strict date check as well.
                 if not (
                     start_date <= published_day <= end_date
                 ):
@@ -1276,14 +1279,13 @@ def build_meeting_briefing(
                     )[:3000]
                 }
 
-    
-    except Exception as error:
+        except Exception as error:
             st.error(
                 f"Tavily search failed for '{query}': {error}"
             )
 
-    
-      sources = list(evidence_store.values())
+    sources = list(evidence_store.values())
+
 
     st.write("### Research diagnostics")
     st.write(f"Unique dated sources collected: {len(sources)}")
