@@ -1205,9 +1205,7 @@ def build_meeting_briefing(
         f"Research window: {start_date} to {end_date}"
     )
 
-        st.info(
-        f"Research window: {start_date} to {end_date}"
-    )
+    
 
     # Prepare focused searches for different types
     # of developments.
