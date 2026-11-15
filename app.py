@@ -25,6 +25,7 @@ from reportlab.platypus import (
     PageBreak,
     Table,
     TableStyle
+    KeepInFrame
 )
 
 
@@ -1420,6 +1421,193 @@ Return only the briefing in concise Markdown.
         "sources": sources,
         "total_searches": len(search_queries)
     }
+
+# ==========================================
+# ONE-PAGE MEETING BRIEFING PDF
+# ==========================================
+
+def create_meeting_brief_pdf(briefing_data):
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=13 * mm,
+        leftMargin=13 * mm,
+        topMargin=11 * mm,
+        bottomMargin=11 * mm
+    )
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "MeetingTitle",
+        parent=styles["Title"],
+        fontName="Helvetica-Bold",
+        fontSize=17,
+        leading=20,
+        alignment=0,
+        textColor=colors.HexColor("#183153"),
+        spaceAfter=5
+    )
+
+    meta_style = ParagraphStyle(
+        "MeetingMeta",
+        parent=styles["Normal"],
+        fontSize=8,
+        leading=11,
+        textColor=colors.HexColor("#536273"),
+        spaceAfter=7
+    )
+
+    heading_style = ParagraphStyle(
+        "MeetingHeading",
+        parent=styles["Heading2"],
+        fontName="Helvetica-Bold",
+        fontSize=10,
+        leading=12,
+        textColor=colors.HexColor("#183153"),
+        spaceBefore=5,
+        spaceAfter=3
+    )
+
+    body_style = ParagraphStyle(
+        "MeetingBody",
+        parent=styles["BodyText"],
+        fontName="Helvetica",
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor("#263445"),
+        spaceAfter=3
+    )
+
+    source_style = ParagraphStyle(
+        "MeetingSources",
+        parent=styles["BodyText"],
+        fontSize=7,
+        leading=9,
+        textColor=colors.HexColor("#34495e"),
+        spaceAfter=2
+    )
+
+    story = []
+
+    subject = escape(briefing_data["subject"])
+    meeting_date = escape(briefing_data["meeting_date"])
+    start_date = escape(briefing_data["start_date"])
+    end_date = escape(briefing_data["end_date"])
+
+    story.append(
+        Paragraph(
+            f"PRE-MEETING BRIEFING: {subject}",
+            title_style
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"<b>Meeting date:</b> {meeting_date}"
+            f" &nbsp;&nbsp; | &nbsp;&nbsp; "
+            f"<b>Research period:</b> {start_date} – {end_date}",
+            meta_style
+        )
+    )
+
+    story.append(
+        Paragraph(
+            "RECENT INTELLIGENCE AND CONVERSATION PREPARATION",
+            meta_style
+        )
+    )
+
+    # Convert the generated Markdown into compact PDF content.
+    markdown = briefing_data["briefing"]
+
+    for line in markdown.splitlines():
+
+        line = line.strip()
+
+        if not line:
+            continue
+
+        if line.startswith("#"):
+            heading = re.sub(r"^#+\s*", "", line)
+            heading = escape(heading)
+
+            story.append(
+                Paragraph(heading, heading_style)
+            )
+            continue
+
+        # Convert Markdown links into clickable PDF links.
+        line = escape(line)
+
+        line = re.sub(
+            r"\[(S\d+)\]\((https?://[^)]+)\)",
+            r'<link href="\2" color="#2878B5"><b>[\1]</b></link>',
+            line
+        )
+
+        # Convert bold Markdown.
+        line = re.sub(
+            r"\*\*(.*?)\*\*",
+            r"<b>\1</b>",
+            line
+        )
+
+        # Convert italic Markdown.
+        line = re.sub(
+            r"\*(.*?)\*",
+            r"<i>\1</i>",
+            line
+        )
+
+        # Format bullet points.
+        if line.startswith("- ") or line.startswith("* "):
+            line = "&#8226; " + line[2:]
+
+        story.append(
+            Paragraph(line, body_style)
+        )
+
+    # Add a compact source list.
+    story.append(
+        Paragraph("SOURCE REFERENCES", heading_style)
+    )
+
+    for index, source in enumerate(
+        briefing_data["sources"],
+        1
+    ):
+
+        title = escape(source.get("title", "Source"))
+        url = escape(source.get("url", ""))
+        published = escape(
+            source.get("published_date", "Date unavailable")
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>[S{index}]</b> {title} "
+                f"({published}) "
+                f'<link href="{url}" color="#2878B5">'
+                f"Open source</link>",
+                source_style
+            )
+        )
+
+    # Keep all content on exactly one page.
+    page_content = KeepInFrame(
+        doc.width,
+        doc.height,
+        story,
+        mode="shrink"
+    )
+
+    doc.build([page_content])
+
+    return buffer.getvalue()
 
 
 
