@@ -130,13 +130,12 @@ def get_secret(key):
 
 
 TAVILY_API_KEY = get_secret("TAVILY_API_KEY")
-GEMINI_API_KEY = get_secret("GEMINI_API_KEY")
+BIFROST_VIRTUAL_KEY = get_secret("BIFROST_VIRTUAL_KEY")
 
-if not TAVILY_API_KEY or not GEMINI_API_KEY:
+if not TAVILY_API_KEY or not BIFROST_VIRTUAL_KEY:
     st.error(
         "API keys not configured. "
-        "Please configure TAVILY_API_KEY and GEMINI_API_KEY "
-        "in Streamlit Secrets."
+        "Please configure TAVILY_API_KEY and BIFROST_VIRTUAL_KEY."
     )
     st.stop()
 
@@ -154,10 +153,17 @@ tavily_client = TavilyClient(
     api_key=TAVILY_API_KEY
 )
 
-gemini_client = genai.Client(
-    api_key=GEMINI_API_KEY
-)
+BIFROST_BASE_URL = "http://localhost:8080/genai"
 
+gemini_client = genai.Client(
+    api_key=BIFROST_VIRTUAL_KEY,
+    http_options={
+        "base_url": "http://localhost:8080/genai",
+        "headers": {
+            "x-bf-vk": BIFROST_VIRTUAL_KEY
+        }
+    }
+)
 
 # ==========================================
 # 4. GEMINI CALL WITH SMART RETRIES
@@ -178,8 +184,8 @@ def ask_gemini(prompt):
             try:
 
                 response = gemini_client.models.generate_content(
-                    model=model,
-                    contents=prompt
+                   model=f"gemini/{model}",
+                   contents=prompt
                 )
 
                 if response.text and response.text.strip():
