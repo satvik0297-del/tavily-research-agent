@@ -1205,21 +1205,22 @@ def build_meeting_briefing(
         f"Research window: {start_date} to {end_date}"
     )
 
+        st.info(
+        f"Research window: {start_date} to {end_date}"
+    )
+
     # Prepare focused searches for different types
     # of developments.
-   search_queries = [
-    f"{subject} latest news and important developments",
-    f"{subject} product launches new services and announcements",
-    f"{subject} leadership executive appointments departures and hires",
-    f"{subject} partnerships acquisitions business deals and investments",
-    f"{subject} latest strategy financial results and business updates",
-    f"{subject} follow-up developments latest status and updates to previous announcements"
-]
+    search_queries = [
+        f"{subject} latest news and important developments",
+        f"{subject} product launches new services and announcements",
+        f"{subject} leadership executive appointments departures and hires",
+        f"{subject} partnerships acquisitions business deals and investments",
+        f"{subject} latest strategy financial results and business updates",
+        f"{subject} follow-up developments latest status and updates to previous announcements"
+    ]
+
     if subject_context.strip():
-        search_queries = [
-            f"{query} {subject_context}"
-            for query in search_queries
-        ]
 
     evidence_store = {}
 
