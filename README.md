@@ -10,7 +10,7 @@
 ![Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=google&logoColor=white)
 ![Hackathon](https://img.shields.io/badge/Geek%20Room%20x%20HackCulture-AI%20Hackathon%202026-ec4899)
 
-**🚀 [Try the live app](ADD-YOUR-STREAMLIT-LINK-HERE)**
+**🚀 [Try the live app](https://tavily-meeting-briefing-hpm3jbkwap5apyoz7jzmwa.streamlit.app/~/+/#tavily-research-agent)**
 
 </div>
 
