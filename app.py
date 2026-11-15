@@ -1276,14 +1276,31 @@ def build_meeting_briefing(
                     )[:3000]
                 }
 
-        except Exception as error:
-            st.warning(
-                f"One search could not be completed: {error}"
+    
+    except Exception as error:
+            st.error(
+                f"Tavily search failed for '{query}': {error}"
             )
 
-    sources = list(evidence_store.values())
+    
+      sources = list(evidence_store.values())
+
+    st.write("### Research diagnostics")
+    st.write(f"Unique dated sources collected: {len(sources)}")
+    st.write(f"Search queries attempted: {len(search_queries)}")
 
     if not sources:
+        st.warning(
+            "Tavily did not provide any sources with "
+            "usable publication dates inside the requested window."
+        )
+
+        st.info(
+            "Check the search warnings above for API errors. "
+            "We will diagnose the returned results before changing "
+            "the date-validation rules."
+        )
+        
         raise RuntimeError(
             "No dated sources were found in the selected "
             "research window. Try another subject or "
